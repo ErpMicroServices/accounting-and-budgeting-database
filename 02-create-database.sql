@@ -254,3 +254,13 @@ create table if not exists payment_budget_allocation(
   an_allocation_of_payment uuid not null references payment(id),
   CONSTRAINT payment_budget_allocation_pk PRIMARY key(id)
 );
+
+create table if not exists gl_budget_xref(
+  id uuid DEFAULT uuid_generate_v4(),
+  from_date date not null default current_date,
+  thru_date date,
+  allocation_percentage double precision,
+  mapped_to_budget_item_type uuid not null references budget_item_type(id),
+  mapped_to_general_ledger_account uuid not null references general_ledger_account(id),
+  CONSTRAINT _pk PRIMARY key(id)
+);
