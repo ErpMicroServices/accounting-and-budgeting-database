@@ -182,3 +182,18 @@ create table if not exists budget_role(
   for_budget_role_type uuid not null references budget_role_type (id),
   CONSTRAINT budget_role_pk PRIMARY key(id)
 );
+
+create table if not exists budget_revision(
+  id uuid DEFAULT uuid_generate_v4(),
+  revision_sequence bigint not null default 1,
+  date_revised date not null default current_date,
+  CONSTRAINT budget_revision_pk PRIMARY key(id)
+);
+
+create table if not exists budget_revision_impact(
+  id uuid DEFAULT uuid_generate_v4(),
+  revised_amount double precision not null,
+  add_delete_flag boolean not null default true,
+  revision_reason text not null,
+  CONSTRAINT budget_revision_impact_pk PRIMARY key(id)
+);
