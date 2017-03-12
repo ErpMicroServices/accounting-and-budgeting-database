@@ -32,5 +32,24 @@ create table if not exists accounting_period(
   from_date date not null default current_date,
   thru_date date,
   within_accounting_period uuid references accounting_period (id),
-  CONSTRAINT _pk PRIMARY key(id)
+  CONSTRAINT accounting_period_pk PRIMARY key(id)
+);
+
+create table if not exists accounting_transaction_type(
+  id uuid DEFAULT uuid_generate_v4(),
+  description text not null CONSTRAINT accounting_transaction_type_description_not_empty CHECK (description <> ''),
+  CONSTRAINT accounting_transaction_type_pk PRIMARY key(id)
+);
+
+create table if not exists accounting_transaction(
+  id uuid DEFAULT uuid_generate_v4(),
+  transaction_date date not null,
+  entry_date date not null default current_date,
+  description text not null CONSTRAINT accounting_transaction_description_not_empty CHECK (description <> ''),
+  from_party_role uuid,
+  from_party uuid,
+  originated_from_invoice uuid,
+  originated_from_payment uuid,
+  originated_from_inventoryItem_variance uuid,
+  CONSTRAINT accounting_transaction_pk PRIMARY key(id)
 );
