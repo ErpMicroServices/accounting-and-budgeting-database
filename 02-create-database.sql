@@ -53,3 +53,13 @@ create table if not exists accounting_transaction(
   originated_from_inventoryItem_variance uuid,
   CONSTRAINT accounting_transaction_pk PRIMARY key(id)
 );
+
+create table if not exists transaction_detail(
+  id uuid DEFAULT uuid_generate_v4(),
+  amount double precision not null,
+  debit_credit_flag boolean,
+  part_of_accounting_transaction uuid not null references accounting_transaction (id),
+  associated_with uuid,
+  allocated_to_organization_gl_account uuid not null references orgnanization_gl_account(id),
+  CONSTRAINT _pk PRIMARY key(id)
+);
