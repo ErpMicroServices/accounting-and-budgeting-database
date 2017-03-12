@@ -10,3 +10,8 @@ insert into accounting_transaction_type (description) values ('Credit Line');
 insert into accounting_transaction_type (description) values ('Sales Accounting Transaction');
 insert into accounting_transaction_type (description) values ('Receipt Accounting Transaction');
 insert into accounting_transaction_type (description) values ('Disbursement Accounting Transaction');
+insert into accounting_transaction_type (description) values ('Depreciation');
+
+insert into fixed_asset_type (description) values ('Property');
+insert into fixed_asset_type (description) values ('Vehicle');
+insert into fixed_asset_type (description) values ('Equipment');

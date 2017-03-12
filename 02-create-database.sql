@@ -76,3 +76,36 @@ create table if not exists orgnanization_gl_account_balance(
   of_organization_gl_account uuid not null references orgnanization_gl_account (id),
   CONSTRAINT orgnanization_gl_account_balance_pk PRIMARY key(id)
 );
+
+create table if not exists fixed_asset_type(
+  id uuid DEFAULT uuid_generate_v4(),
+  description text not null CONSTRAINT fixed_asset_type_description_not_empty CHECK (description <> ''),
+  CONSTRAINT fixed_asset_type_pk PRIMARY key(id)
+);
+
+create table if not exists fixed_asset(
+  id uuid DEFAULT uuid_generate_v4(),
+  name text not null CONSTRAINT fixed_asset_name_not_empty CHECK (name <> ''),
+  date_acquired date not null,
+  date_last_serviced date,
+  date_next_service date,
+  production_capacity bigint,
+  description text not null,
+  CONSTRAINT fixed_asset_pk PRIMARY key(id)
+);
+
+create table if not exists depreciation_method(
+  id uuid DEFAULT uuid_generate_v4(),
+  description text not null CONSTRAINT depreciation_method_description_not_empty CHECK (description <> ''),
+  formula text,
+  CONSTRAINT depreciation_method_pk PRIMARY key(id)
+);
+
+create table if not exists fixed_asset_depreciation_method(
+  id uuid DEFAULT uuid_generate_v4(),
+  from_date date not null default current_date,
+  thru_date date,
+  for_fixed_asset uuid not null references fixed_asset(id),
+  defined_by uuid not null references depreciation_method(id),
+  CONSTRAINT fixed_asset_depreciation_method_pk PRIMARY key(id)
+);
