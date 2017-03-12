@@ -213,3 +213,27 @@ create table if not exists budget_review(
   for_budget uuid not null references budget (id),
   CONSTRAINT budget_review_pk PRIMARY key(id)
 );
+
+create table if not exists budget_scenario(
+  id uuid DEFAULT uuid_generate_v4(),
+  description text not null CONSTRAINT budget_scenario_description_not_empty CHECK (description <> ''),
+  CONSTRAINT _pk PRIMARY key(id)
+);
+create table if not exists budget_scenario_rule(
+  id uuid DEFAULT uuid_generate_v4(),
+  amount_change double precision,
+  percentage_change double precision,
+  for_budget_item_type uuid not null references budget_scenario(id),
+  for_budget_scenario uuid not null references budget_item_type(id),
+  CONSTRAINT budget_scenario_rule_pk PRIMARY key(id)
+);
+
+create table if not exists budget_scenario_application(
+  id uuid DEFAULT uuid_generate_v4(),
+  amount_change double precision,
+  percentage_change double precision,
+  affecting_budget uuid references budget (id),
+  affecting_budget_item uuid references budget_item(id),
+  from_budget_scenario uuid references budget_scenario(id),
+  CONSTRAINT budget_scenario_application_pk PRIMARY key(id)
+);
