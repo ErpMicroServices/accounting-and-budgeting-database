@@ -61,5 +61,13 @@ create table if not exists transaction_detail(
   part_of_accounting_transaction uuid not null references accounting_transaction (id),
   associated_with uuid,
   allocated_to_organization_gl_account uuid not null references orgnanization_gl_account(id),
-  CONSTRAINT _pk PRIMARY key(id)
+  CONSTRAINT transaction_detail_pk PRIMARY key(id)
+);
+
+create table if not exists orgnanization_gl_account_balance(
+  id uuid DEFAULT uuid_generate_v4(),
+  amount double precision not null,
+  within_accounting_period uuid not null references accounting_period (id),
+  of_organization_gl_account uuid not null references orgnanization_gl_account (id),
+  CONSTRAINT orgnanization_gl_account_balance_pk PRIMARY key(id)
 );
