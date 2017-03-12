@@ -23,6 +23,11 @@ create table if not exists orgnanization_gl_account(
   thru_date date,
   for_general_ledger_account uuid not null references general_ledger_account (id),
   for_internal_organization uuid not null,
+  subsidiary_account_of uuid references orgnanization_gl_account (id),
+  referencing_product uuid,
+  referenceing_product_category uuid,
+  referencing_bill_to_customer uuid,
+  referencing_supplier uuid,
   CONSTRAINT orgnanization_gl_account_pk PRIMARY key(id)
 );
 
