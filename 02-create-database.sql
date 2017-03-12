@@ -109,3 +109,76 @@ create table if not exists fixed_asset_depreciation_method(
   defined_by uuid not null references depreciation_method(id),
   CONSTRAINT fixed_asset_depreciation_method_pk PRIMARY key(id)
 );
+
+create table if not exists budget_status_type(
+  id uuid DEFAULT uuid_generate_v4(),
+  description text not null CONSTRAINT buget_status_type_description_not_empty CHECK (description <> ''),
+  CONSTRAINT buget_status_type_pk PRIMARY key(id)
+);
+
+create table if not exists budget_item_type(
+  id uuid DEFAULT uuid_generate_v4(),
+  description text not null CONSTRAINT budget_item_type_description_not_empty CHECK (description <> ''),
+  CONSTRAINT budget_item_type_pk PRIMARY key(id)
+);
+
+create table if not exists budge_role_type(
+  id uuid DEFAULT uuid_generate_v4(),
+  description text not null CONSTRAINT budget_role_type_description_not_empty CHECK (description <> ''),
+  CONSTRAINT budge_role_type_pk PRIMARY key(id)
+);
+
+create table if not exists budget_type(
+  id uuid DEFAULT uuid_generate_v4(),
+  description text not null CONSTRAINT budget_type_description_not_empty CHECK (description <> ''),
+  CONSTRAINT budge_type_pk PRIMARY key(id)
+);
+
+create table if not exists standard_time_period(
+  id uuid DEFAULT uuid_generate_v4(),
+  from_date date not null default current_date,
+  thru_date date,
+  described_by  uuid not null references period_type (id),
+  CONSTRAINT standard_time_period_pk PRIMARY key(id)
+);
+
+create table if not exists budget(
+  id uuid DEFAULT uuid_generate_v4(),
+  comment text,
+  associated_with_standard_time_period uuid not null references standard_time_period (id),
+  CONSTRAINT budget_pk PRIMARY key(id)
+);
+
+create table if not exists budget_status(
+  id uuid DEFAULT uuid_generate_v4(),
+  status_date date not null default current_date,
+  comment text,
+  defined_by uuid not null references budget_status_type(id),
+  status_for_budget uuid not null references budget (id),
+  CONSTRAINT budget_status_pk PRIMARY key(id)
+);
+
+create table if not exists budget_item(
+  id uuid DEFAULT uuid_generate_v4(),
+  amount double precision not null,
+  purpose text,
+  justification text,
+  part_of_budget_item uuid references budget_item(id),
+  described_by uuid not null references budget_item_type(id),
+  part_of_budget uuid not null references budget(id),
+  CONSTRAINT budget_item_pk PRIMARY key(id)
+);
+
+create table if not exists budget_role_type(
+  id uuid DEFAULT uuid_generate_v4(),
+  description text not null CONSTRAINT budget_role_type_description_not_empty CHECK (description <> ''),
+  CONSTRAINT budget_role_type_pk PRIMARY key(id)
+);
+
+create table if not exists budget_role(
+  id uuid DEFAULT uuid_generate_v4(),
+  involved_in uuid not null references budget(id),
+  for_party uuid not null,
+  for_budget_role_type uuid not null references budget_role_type (id),
+  CONSTRAINT budget_role_pk PRIMARY key(id)
+);
