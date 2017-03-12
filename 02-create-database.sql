@@ -25,3 +25,12 @@ create table if not exists orgnanization_gl_account(
   for_internal_organization uuid not null,
   CONSTRAINT orgnanization_gl_account_pk PRIMARY key(id)
 );
+
+create table if not exists accounting_period(
+  id uuid DEFAULT uuid_generate_v4(),
+  accounting_period_number bigint not null default 1,
+  from_date date not null default current_date,
+  thru_date date,
+  within_accounting_period uuid references accounting_period (id),
+  CONSTRAINT _pk PRIMARY key(id)
+);
