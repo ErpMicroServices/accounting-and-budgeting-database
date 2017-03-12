@@ -217,7 +217,7 @@ create table if not exists budget_review(
 create table if not exists budget_scenario(
   id uuid DEFAULT uuid_generate_v4(),
   description text not null CONSTRAINT budget_scenario_description_not_empty CHECK (description <> ''),
-  CONSTRAINT _pk PRIMARY key(id)
+  CONSTRAINT budget_scenario_pk PRIMARY key(id)
 );
 create table if not exists budget_scenario_rule(
   id uuid DEFAULT uuid_generate_v4(),
@@ -236,4 +236,21 @@ create table if not exists budget_scenario_application(
   affecting_budget_item uuid references budget_item(id),
   from_budget_scenario uuid references budget_scenario(id),
   CONSTRAINT budget_scenario_application_pk PRIMARY key(id)
+);
+
+create table if not exists payment(
+  id uuid DEFAULT uuid_generate_v4(),
+  effective_date date not null,
+  payment_references_num text not null constraint payment_references_num check (payment_references_num <> ''),
+  amount double precision not null,
+  comment text,
+  CONSTRAINT payment_pk PRIMARY key(id)
+);
+
+create table if not exists payment_budget_allocation(
+  id uuid DEFAULT uuid_generate_v4(),
+  amount double precision,
+  a_usage_of_budget_item uuid not null references budget_item(id),
+  an_allocation_of_payment uuid not null references payment(id),
+  CONSTRAINT payment_budget_allocation_pk PRIMARY key(id)
 );
