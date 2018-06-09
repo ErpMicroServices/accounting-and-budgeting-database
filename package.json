@@ -8,7 +8,7 @@
   },
   "license": "Apache-2.0",
   "scripts": {
-    "build": "docker build --tag erpmicroservices/accounting-and-budgeting-database --rm .",
+    "db_admin" : "docker run --detach --publish 5050:5050 --name accounting-and-budgeting-database-pgadmin --link accounting-and-budgeting-database:db thajeztah/pgadmin4",
     "start": "docker run --publish 5432:5432 --name accounting-and-budgeting-database-1 erpmicroservices/accounting-and-budgeting-database",
     "test": "cucumber-js --compiler es6:babel-core/register  -r ./features ../accounting-and-budgeting-features"
   },
