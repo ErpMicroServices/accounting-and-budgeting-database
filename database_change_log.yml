@@ -1,0 +1,16 @@
+databaseChangeLog:
+  - preConditions:
+      - runningAs:
+          username: accounting-and-budgeting_database
+
+  - changeSet:
+      id: Create and load all data
+      author: Jim Barrows
+      changes:
+        - sqlFile:
+            path: ./sql/01-install-extensions.sql
+        - sqlFile:
+            path: ./sql/02-create-database.sql
+        - sqlFile:
+            path: ./sql/03-initial-data.sql
+            splitStatements: false
