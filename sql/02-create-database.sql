@@ -153,13 +153,13 @@ create table if not exists budget_item_type
     CONSTRAINT budget_item_type_pk PRIMARY key (id)
 );
 
-create table if not exists budge_role_type
+create table if not exists budget_role_type
 (
     id          uuid DEFAULT uuid_generate_v4(),
     description text not null
         CONSTRAINT budget_role_type_description_not_empty CHECK (description <> ''),
-    parent_id   UUID REFERENCES budge_role_type (id),
-    CONSTRAINT budge_role_type_pk PRIMARY key (id)
+    parent_id   UUID REFERENCES budget_role_type (id),
+    CONSTRAINT budget_role_type_pk PRIMARY key (id)
 );
 
 create table if not exists budget_type
@@ -168,7 +168,7 @@ create table if not exists budget_type
     description text not null
         CONSTRAINT budget_type_description_not_empty CHECK (description <> ''),
     parent_id   UUID REFERENCES budget_type (id),
-    CONSTRAINT budge_type_pk PRIMARY key (id)
+    CONSTRAINT budget_type_pk PRIMARY key (id)
 );
 
 create table if not exists standard_time_period
