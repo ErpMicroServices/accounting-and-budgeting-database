@@ -79,12 +79,12 @@ create table if not exists accounting_transaction
 
 create table if not exists transaction_detail
 (
-    id                                   uuid DEFAULT uuid_generate_v4(),
-    amount                               double precision not null,
-    debit_credit_flag                    boolean,
-    part_of_accounting_transaction       uuid             not null references accounting_transaction (id),
-    associated_with                      uuid,
-    allocated_to_organization_gl_account uuid             not null references organization_gl_account (id),
+    id                         uuid DEFAULT uuid_generate_v4(),
+    amount                     numeric(12, 3) not null,
+    debit_credit_flag          boolean,
+    parent_id                  uuid           not null references transaction_detail (id),
+    organization_gl_account_id uuid           not null references organization_gl_account (id),
+    accounting_transaction_id  uuid           not null references accounting_transaction (id),
     CONSTRAINT transaction_detail_pk PRIMARY key (id)
 );
 
