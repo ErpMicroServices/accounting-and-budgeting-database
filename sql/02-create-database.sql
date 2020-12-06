@@ -63,16 +63,17 @@ create table if not exists accounting_transaction_type
 
 create table if not exists accounting_transaction
 (
-    id                                     uuid          DEFAULT uuid_generate_v4(),
-    transaction_date                       date not null,
-    entry_date                             date not null default current_date,
-    description                            text not null
+    id                         uuid          DEFAULT uuid_generate_v4(),
+    transaction_date           date not null,
+    entry_date                 date not null default current_date,
+    description                text not null
         CONSTRAINT accounting_transaction_description_not_empty CHECK (description <> ''),
-    from_party_role                        uuid,
-    from_party                             uuid,
-    originated_from_invoice                uuid,
-    originated_from_payment                uuid,
-    originated_from_inventoryItem_variance uuid,
+    type_id                    uuid not null references accounting_transaction_type (id),
+    party_role_id              uuid,
+    party_id                   uuid,
+    invoice_id                 uuid,
+    payment_id                 uuid,
+    inventory_item_variance_id uuid,
     CONSTRAINT accounting_transaction_pk PRIMARY key (id)
 );
 
