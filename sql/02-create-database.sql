@@ -259,18 +259,18 @@ create table if not exists budget_review_result_type
     id          uuid DEFAULT uuid_generate_v4(),
     description text not null
         CONSTRAINT budget_review_result_type_description_not_empty CHECK (description <> ''),
-    comment     text,
     parent_id   UUID REFERENCES budget_review_result_type (id),
     CONSTRAINT budget_review_result_type_pk PRIMARY key (id)
 );
 
 create table if not exists budget_review
 (
-    id           uuid          DEFAULT uuid_generate_v4(),
-    review_date  date not null default current_date,
-    described_by uuid not null references budget_review_result_type (id),
-    of_party     uuid not null,
-    for_budget   uuid not null references budget (id),
+    id          uuid          DEFAULT uuid_generate_v4(),
+    review_date date not null default current_date,
+    type_id     uuid not null references budget_review_result_type (id),
+    party_id    uuid not null,
+    comment     text,
+    budget_id   uuid not null references budget (id),
     CONSTRAINT budget_review_pk PRIMARY key (id)
 );
 
