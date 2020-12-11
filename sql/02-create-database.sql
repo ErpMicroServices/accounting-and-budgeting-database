@@ -178,40 +178,41 @@ create table if not exists budget_type
 
 create table if not exists standard_time_period
 (
-    id           uuid          DEFAULT uuid_generate_v4(),
-    from_date    date not null default current_date,
-    thru_date    date,
-    described_by uuid not null references period_type (id),
+    id        uuid          DEFAULT uuid_generate_v4(),
+    from_date date not null default current_date,
+    thru_date date,
+    type_id   uuid not null references period_type (id),
     CONSTRAINT standard_time_period_pk PRIMARY key (id)
 );
 
 create table if not exists budget
 (
-    id                                   uuid DEFAULT uuid_generate_v4(),
-    comment                              text,
-    associated_with_standard_time_period uuid not null references standard_time_period (id),
+    id                      uuid DEFAULT uuid_generate_v4(),
+    comment                 text,
+    standard_time_period_id uuid not null references standard_time_period (id),
+    type_id                 uuid not null references budget_type (id),
     CONSTRAINT budget_pk PRIMARY key (id)
 );
 
 create table if not exists budget_status
 (
-    id                uuid          DEFAULT uuid_generate_v4(),
-    status_date       date not null default current_date,
-    comment           text,
-    defined_by        uuid not null references budget_status_type (id),
-    status_for_budget uuid not null references budget (id),
+    id          uuid          DEFAULT uuid_generate_v4(),
+    status_date date not null default current_date,
+    comment     text,
+    type_id     uuid not null references budget_status_type (id),
+    budget_id   uuid not null references budget (id),
     CONSTRAINT budget_status_pk PRIMARY key (id)
 );
 
 create table if not exists budget_item
 (
-    id                  uuid DEFAULT uuid_generate_v4(),
-    amount              double precision not null,
-    purpose             text,
-    justification       text,
-    part_of_budget_item uuid references budget_item (id),
-    described_by        uuid             not null references budget_item_type (id),
-    part_of_budget      uuid             not null references budget (id),
+    id             uuid DEFAULT uuid_generate_v4(),
+    amount         numeric(12, 3) not null,
+    purpose        text,
+    justification  text,
+    budget_item_id uuid references budget_item (id),
+    type_id        uuid           not null references budget_item_type (id),
+    budget_id      uuid           not null references budget (id),
     CONSTRAINT budget_item_pk PRIMARY key (id)
 );
 
@@ -226,10 +227,10 @@ create table if not exists budget_role_type
 
 create table if not exists budget_role
 (
-    id                   uuid DEFAULT uuid_generate_v4(),
-    involved_in          uuid not null references budget (id),
-    for_party            uuid not null,
-    for_budget_role_type uuid not null references budget_role_type (id),
+    id        uuid DEFAULT uuid_generate_v4(),
+    budget_id uuid not null references budget (id),
+    party_id  uuid not null,
+    type_id   uuid not null references budget_role_type (id),
     CONSTRAINT budget_role_pk PRIMARY key (id)
 );
 
