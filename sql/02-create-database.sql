@@ -283,32 +283,32 @@ create table if not exists budget_scenario
 );
 create table if not exists budget_scenario_rule
 (
-    id                   uuid DEFAULT uuid_generate_v4(),
-    amount_change        double precision,
-    percentage_change    double precision,
-    for_budget_item_type uuid not null references budget_scenario (id),
-    for_budget_scenario  uuid not null references budget_item_type (id),
+    id                 uuid DEFAULT uuid_generate_v4(),
+    amount_change      numeric(12, 3),
+    percentage_change  numeric(12, 3),
+    budget_scenario_id uuid not null references budget_scenario (id),
+    type_id            uuid not null references budget_item_type (id),
     CONSTRAINT budget_scenario_rule_pk PRIMARY key (id)
 );
 
 create table if not exists budget_scenario_application
 (
-    id                    uuid DEFAULT uuid_generate_v4(),
-    amount_change         double precision,
-    percentage_change     double precision,
-    affecting_budget      uuid references budget (id),
-    affecting_budget_item uuid references budget_item (id),
-    from_budget_scenario  uuid references budget_scenario (id),
+    id                 uuid DEFAULT uuid_generate_v4(),
+    amount_change      numeric(12, 3),
+    percentage_change  numeric(12, 3),
+    budget_id          uuid references budget (id),
+    budget_item_id     uuid references budget_item (id),
+    budget_scenario_id uuid references budget_scenario (id),
     CONSTRAINT budget_scenario_application_pk PRIMARY key (id)
 );
 
 create table if not exists payment
 (
     id                     uuid DEFAULT uuid_generate_v4(),
-    effective_date         date             not null,
-    payment_references_num text             not null
+    effective_date         date           not null,
+    payment_references_num text           not null
         constraint payment_references_num check (payment_references_num <> ''),
-    amount                 double precision not null,
+    amount                 numeric(12, 3) not null,
     comment                text,
     CONSTRAINT payment_pk PRIMARY key (id)
 );
@@ -316,7 +316,7 @@ create table if not exists payment
 create table if not exists payment_budget_allocation
 (
     id                       uuid DEFAULT uuid_generate_v4(),
-    amount                   double precision,
+    amount                   numeric(12, 3),
     a_usage_of_budget_item   uuid not null references budget_item (id),
     an_allocation_of_payment uuid not null references payment (id),
     CONSTRAINT payment_budget_allocation_pk PRIMARY key (id)
@@ -327,7 +327,7 @@ create table if not exists gl_budget_xref
     id                               uuid          DEFAULT uuid_generate_v4(),
     from_date                        date not null default current_date,
     thru_date                        date,
-    allocation_percentage            double precision,
+    allocation_percentage            numeric(12, 3),
     mapped_to_budget_item_type       uuid not null references budget_item_type (id),
     mapped_to_general_ledger_account uuid not null references general_ledger_account (id),
     CONSTRAINT _pk PRIMARY key (id)
