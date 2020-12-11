@@ -28,16 +28,16 @@ create table if not exists general_ledger_account
 
 create table if not exists organization_gl_account
 (
-    id                              uuid          DEFAULT uuid_generate_v4(),
-    from_date                       date not null default current_date,
-    thru_date                       date,
-    general_ledger_account_id       uuid not null references general_ledger_account (id),
-    internal_organization_id        uuid not null,
-    subsidiary_account_of_id        uuid references organization_gl_account (id),
-    referencing_product_id          uuid,
-    referencing_product_category_id uuid,
-    referencing_bill_to_customer_id uuid,
-    referencing_supplier_id         uuid,
+    id                         uuid          DEFAULT uuid_generate_v4(),
+    from_date                  date not null default current_date,
+    thru_date                  date,
+    general_ledger_account_id  uuid not null references general_ledger_account (id),
+    internal_organization_id   uuid not null,
+    organization_gl_account_id uuid references organization_gl_account (id),
+    product_id                 uuid,
+    product_category_id        uuid,
+    bill_to_customer_id        uuid,
+    supplier_id                uuid,
     CONSTRAINT organization_gl_account_pk PRIMARY key (id)
 );
 
@@ -61,22 +61,6 @@ create table if not exists accounting_transaction_type
     CONSTRAINT accounting_transaction_type_pk PRIMARY key (id)
 );
 
-create table if not exists accounting_transaction
-(
-    id                         uuid          DEFAULT uuid_generate_v4(),
-    transaction_date           date not null,
-    entry_date                 date not null default current_date,
-    description                text not null
-        CONSTRAINT accounting_transaction_description_not_empty CHECK (description <> ''),
-    type_id                    uuid not null references accounting_transaction_type (id),
-    party_role_id              uuid,
-    party_id                   uuid,
-    invoice_id                 uuid,
-    payment_id                 uuid,
-    inventory_item_variance_id uuid,
-    CONSTRAINT accounting_transaction_pk PRIMARY key (id)
-);
-
 create table if not exists organization_gl_account_balance
 (
     id                         uuid DEFAULT uuid_generate_v4(),
@@ -85,18 +69,6 @@ create table if not exists organization_gl_account_balance
     organization_gl_account_id uuid           not null references organization_gl_account (id),
     CONSTRAINT organization_gl_account_balance_pk PRIMARY key (id)
 );
-
-create table if not exists transaction_detail
-(
-    id                                 uuid DEFAULT uuid_generate_v4(),
-    amount                             numeric(12, 3) not null,
-    debit_credit_flag                  boolean,
-    parent_id                          uuid           not null references transaction_detail (id),
-    organization_gl_account_balance_id uuid           not null references organization_gl_account_balance (id),
-    accounting_transaction_id          uuid           not null references accounting_transaction (id),
-    CONSTRAINT transaction_detail_pk PRIMARY key (id)
-);
-
 
 create table if not exists fixed_asset_type
 (
@@ -112,12 +84,41 @@ create table if not exists fixed_asset
     id                  uuid DEFAULT uuid_generate_v4(),
     name                text not null
         CONSTRAINT fixed_asset_name_not_empty CHECK (name <> ''),
-    date_acquired       date not null,
+    date_acquired       date,
     date_last_serviced  date,
     date_next_service   date,
     production_capacity bigint,
-    description         text not null,
+    description         text,
+    type_id             uuid references fixed_asset_type (id),
     CONSTRAINT fixed_asset_pk PRIMARY key (id)
+);
+
+create table if not exists accounting_transaction
+(
+    id                         uuid          DEFAULT uuid_generate_v4(),
+    transaction_date           date not null,
+    entry_date                 date not null default current_date,
+    description                text not null
+        CONSTRAINT accounting_transaction_description_not_empty CHECK (description <> ''),
+    type_id                    uuid not null references accounting_transaction_type (id),
+    party_role_id              uuid,
+    party_id                   uuid,
+    invoice_id                 uuid,
+    payment_id                 uuid,
+    inventory_item_variance_id uuid,
+    fixed_asset_id             uuid references fixed_asset (id),
+    CONSTRAINT accounting_transaction_pk PRIMARY key (id)
+);
+
+create table if not exists transaction_detail
+(
+    id                                 uuid DEFAULT uuid_generate_v4(),
+    amount                             numeric(12, 3) not null,
+    debit_credit_flag                  boolean,
+    parent_id                          uuid           not null references transaction_detail (id),
+    organization_gl_account_balance_id uuid           not null references organization_gl_account_balance (id),
+    accounting_transaction_id          uuid           not null references accounting_transaction (id),
+    CONSTRAINT transaction_detail_pk PRIMARY key (id)
 );
 
 create table if not exists depreciation_method
@@ -131,11 +132,11 @@ create table if not exists depreciation_method
 
 create table if not exists fixed_asset_depreciation_method
 (
-    id              uuid          DEFAULT uuid_generate_v4(),
-    from_date       date not null default current_date,
-    thru_date       date,
-    for_fixed_asset uuid not null references fixed_asset (id),
-    defined_by      uuid not null references depreciation_method (id),
+    id                     uuid          DEFAULT uuid_generate_v4(),
+    from_date              date not null default current_date,
+    thru_date              date,
+    fixed_asset_id         uuid not null references fixed_asset (id),
+    depreciation_method_id uuid not null references depreciation_method (id),
     CONSTRAINT fixed_asset_depreciation_method_pk PRIMARY key (id)
 );
 
