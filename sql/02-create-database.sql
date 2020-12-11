@@ -216,6 +216,23 @@ create table if not exists budget_item
     CONSTRAINT budget_item_pk PRIMARY key (id)
 );
 
+create table if not exists order_item_budget_allocation
+(
+    id             uuid DEFAULT uuid_generate_v4(),
+    budget_item_id uuid not null references budget_item (id),
+    order_item_id  uuid not null,
+    CONSTRAINT order_item_budget_allocation_pk PRIMARY key (id)
+);
+
+create table if not exists requirement_budget_allocation
+(
+    id             uuid DEFAULT uuid_generate_v4(),
+    amount         numeric(12, 3) not null,
+    budget_item_id uuid           not null references budget_item (id),
+    requirement_id uuid           not null,
+    CONSTRAINT requirement_budget_allocation_pk PRIMARY key (id)
+);
+
 create table if not exists budget_role_type
 (
     id          uuid DEFAULT uuid_generate_v4(),
@@ -304,21 +321,21 @@ create table if not exists budget_scenario_application
 
 create table if not exists payment
 (
-    id                     uuid DEFAULT uuid_generate_v4(),
-    effective_date         date           not null,
-    payment_references_num text           not null
-        constraint payment_references_num check (payment_references_num <> ''),
-    amount                 numeric(12, 3) not null,
-    comment                text,
+    id                       uuid DEFAULT uuid_generate_v4(),
+    effective_date           date           not null,
+    payment_reference_number text           not null
+        constraint payment_references_num check (payment_reference_number <> ''),
+    amount                   numeric(12, 3) not null,
+    comment                  text,
     CONSTRAINT payment_pk PRIMARY key (id)
 );
 
 create table if not exists payment_budget_allocation
 (
-    id                       uuid DEFAULT uuid_generate_v4(),
-    amount                   numeric(12, 3),
-    a_usage_of_budget_item   uuid not null references budget_item (id),
-    an_allocation_of_payment uuid not null references payment (id),
+    id             uuid DEFAULT uuid_generate_v4(),
+    amount         numeric(12, 3),
+    budget_item_id uuid not null references budget_item (id),
+    payment_id     uuid not null references payment (id),
     CONSTRAINT payment_budget_allocation_pk PRIMARY key (id)
 );
 
